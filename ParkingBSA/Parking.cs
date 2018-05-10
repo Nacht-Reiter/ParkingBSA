@@ -27,6 +27,7 @@ namespace ParkingBSA
             if (car != null && this.FreeSpace() > 0)
             {
                 car.Payed += AddIncome;
+                car.TransactionMade -= AddTransaction;
                 CarsList.Add(car);
             }
         }
@@ -37,6 +38,23 @@ namespace ParkingBSA
             {
                 CarsList.Remove(car);
                 car.Payed -= AddIncome;
+                car.TransactionMade -= AddTransaction;
+            }
+        }
+
+        public void AddTransaction(Transaction transaction)
+        {
+            if (transaction != null)
+            {
+                TransactionsList.Add(transaction);
+            }
+        }
+
+        public void RemoveTransaction(Transaction transaction)
+        {
+            if (transaction != null)
+            {
+                TransactionsList.Remove(transaction);
             }
         }
 

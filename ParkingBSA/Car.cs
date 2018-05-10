@@ -23,13 +23,20 @@ namespace ParkingBSA
         public CarTypes CarType { get; set; }
 
         public delegate void CarPayHandler(decimal payment);
+        public delegate void TransactionHandler(Transaction transaction);
         public event CarPayHandler Payed;
+        public event TransactionHandler TransactionMade;
 
-        public Car(string iD, CarTypes carType)
+        public Car(string iD, CarTypes carType, decimal balance)
         {
+            if (string.IsNullOrWhiteSpace(iD))
+            {
+                throw new ArgumentException();
+            }
+
             ID = iD;
             CarType = carType;
-            Payed += RemovePayment;
+            Balance = balance;
         }
 
         public void RemovePayment(decimal payment)
@@ -39,7 +46,21 @@ namespace ParkingBSA
 
         public void AddIncome(decimal income)
         {
-            Balance += income;
+            if (this.IsDebtor())
+            {
+                Balance += income;
+                decimal debt = income;
+                if (!IsDebtor())
+                {
+                    debt -= Balance;
+                }
+                Payed(debt);
+                TransactionMade(new Transaction(DateTime.Now, ID, debt));
+            }
+            else
+            {
+                Balance += income;
+            }
         }
 
         public bool IsDebtor()
@@ -58,7 +79,14 @@ namespace ParkingBSA
             {
                 cost *= Settings.Fine;
             }
-            Payed(cost);
+            else
+            {
+                Payed(cost);
+                TransactionMade(new Transaction(DateTime.Now, ID, cost));
+            }
+            RemovePayment(cost);
+            
         }
+        
     }
 }
