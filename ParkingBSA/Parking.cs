@@ -53,15 +53,12 @@ namespace ParkingBSA
             {
                 TransactionsList.Add(transaction);
             }
-        }
-
-        public void RemoveTransaction(Transaction transaction)
-        {
-            if (transaction != null)
+            if ((DateTime.Now - TransactionsList[0].TransactionDateTime).Minutes > 0)
             {
-                TransactionsList.Remove(transaction);
+                TransactionsList.Remove(TransactionsList[0]);
             }
         }
+
 
         public int FreeSpace()
         {
