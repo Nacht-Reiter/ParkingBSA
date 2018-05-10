@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Timers;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +11,12 @@ namespace ParkingBSA
     {
         private static readonly Lazy<Parking> lazy = new Lazy<Parking>(() => new Parking());
         public static Parking Instanse { get { return lazy.Value; } }
+        private Timer PayTimer = new Timer(3000);
 
         private Parking()
         {
+            PayTimer.AutoReset = true;
+            PayTimer.Start();
 
         }
 
@@ -28,6 +32,7 @@ namespace ParkingBSA
             {
                 car.Payed += AddIncome;
                 car.TransactionMade -= AddTransaction;
+                PayTimer.Elapsed += car.Pay;
                 CarsList.Add(car);
             }
         }

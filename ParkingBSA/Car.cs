@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace ParkingBSA
 {
@@ -72,7 +73,7 @@ namespace ParkingBSA
             return false;
         }
 
-        public void Pay()
+        public void Pay(object sender, ElapsedEventArgs e)
         {
             decimal cost = Settings.Prices[CarType];
             if (Balance < Settings.Prices[CarType])
