@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace ParkingBSA
 {
-    class Transaction
+    public class Transaction
     {
+        public DateTime TransactionDateTime { get; set; }
+        public String CarID { get; set; }
+        public decimal PayedMoney { get; set; }
+
+        public Transaction(DateTime transactionDateTime, string carID, decimal payedMoney)
+        {
+            TransactionDateTime = transactionDateTime;
+            CarID = carID;
+            PayedMoney = payedMoney;
+        }
     }
 }
