@@ -30,24 +30,19 @@ namespace ParkingBSA
 
         public Car(string iD, CarTypes carType, decimal balance)
         {
-            if (string.IsNullOrWhiteSpace(iD))
-            {
-                throw new ArgumentException();
-            }
-
             ID = iD;
             CarType = carType;
             Balance = balance;
         }
 
-        public void RemovePayment(decimal payment)
+        public void RemovePayment(decimal payment) //Subtract sum
         {
                 Balance -= payment;   
         }
 
-        public void AddIncome(decimal income)
+        public void AddIncome(decimal income)      //Replenish the balance
         {
-            if (this.IsDebtor())
+            if (this.IsDebtor())                   //This block works when car is debtor to return debt
             {
                 Balance += income;
                 decimal debt = income;
@@ -64,7 +59,7 @@ namespace ParkingBSA
             }
         }
 
-        public bool IsDebtor()
+        public bool IsDebtor() //Check balance for debt
         {
             if(Balance < 0)
             {
@@ -73,14 +68,14 @@ namespace ParkingBSA
             return false;
         }
 
-        public void Pay(object sender, ElapsedEventArgs e)
-        {
+        public void Pay(object sender, ElapsedEventArgs e) //Pay for parking, works every N seconds
+        {                                                  //(N given in Settings)
             decimal cost = Settings.Prices[CarType];
-            if (Balance < Settings.Prices[CarType])
+            if (Balance < Settings.Prices[CarType])        //This block works when balance is not enough
             {
                 cost *= Settings.Fine;
             }
-            else
+            else            //This block works only when balance is enough, to add sum to parking`s balance
             {
                 Payed(cost);
 

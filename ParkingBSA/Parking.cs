@@ -12,7 +12,7 @@ namespace ParkingBSA
     {
         private static readonly Lazy<Parking> lazy = new Lazy<Parking>(() => new Parking());
         public static Parking Instanse { get { return lazy.Value; } }
-        private Timer PayTimer = new Timer(3000);
+        private Timer PayTimer = new Timer(1000*Settings.Timeout);
         private Timer LogTimer = new Timer(60000);
 
         private Parking()
@@ -31,7 +31,7 @@ namespace ParkingBSA
         public List<Transaction> TransactionsList { get; } = new List<Transaction>();
 
 
-        public void AddCar(Car car)
+        public void AddCar(Car car) //Add car to parking
         {
             if (car != null && this.FreeSpace() > 0)
             {
@@ -42,32 +42,38 @@ namespace ParkingBSA
             }
         }
 
-        public void RemoveCar(Car car)
+        public void RemoveCar(Car car) //Remove car from parking
         {
             if (car != null)
             {
-                PayTimer.Elapsed -= car.Pay;
-                car.Payed -= AddIncome;
-                car.TransactionMade -= AddTransaction;
-                CarsList.Remove(car);
-                
+                if (!car.IsDebtor())
+                {
+                    PayTimer.Elapsed -= car.Pay;
+                    car.Payed -= AddIncome;
+                    car.TransactionMade -= AddTransaction;
+                    CarsList.Remove(car);
+                }
+                else
+                {
+                    throw new ArithmeticException("This car is debtor, refill the balance to get car");
+                }
             }
         }
 
-        public void AddTransaction(Transaction transaction)
+        public void AddTransaction(Transaction transaction) //Create transaction
         {
             if (transaction != null)
             {
                 TransactionsList.Add(transaction);
             }
-            if ((DateTime.Now - TransactionsList[0].TransactionDateTime).Minutes > 0)
-            {
+            if ((DateTime.Now - TransactionsList[0].TransactionDateTime).Minutes > 0)//Delete transaction                                                                                    
+            {                                                                        //which older that 1 minute
                 TransactionsList.Remove(TransactionsList[0]);
             }
         }
 
-        public void Log(object sender, ElapsedEventArgs e)
-        {
+        public void Log(object sender, ElapsedEventArgs e) // Write transactions into transaction.log
+        {                                                  // Works every minute
             using (StreamWriter sw = new StreamWriter("Transactions.log", true))
             {
                 foreach(Transaction i in TransactionsList)
@@ -78,12 +84,12 @@ namespace ParkingBSA
 
         }
 
-        public int FreeSpace()
+        public int FreeSpace() //returns free space of parking
         {
             return Settings.ParkingSpace - CarsList.Count;
         }
 
-        public void AddIncome(decimal income)
+        public void AddIncome(decimal income) //Adding car`s payments to balance
         {
             Balance += income;
         }

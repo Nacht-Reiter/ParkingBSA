@@ -16,25 +16,28 @@ namespace ParkingBSA
         private delegate void MethodHandler();
         private static Parking Parking { get; set; } = Parking.Instanse;
 
-        private static readonly List<String> MainMenuItems = new List<String>
+                                                                               //Main Menu atributes
+        private static readonly List<String> MainMenuItems = new List<String>  //Shown into console to choose
         {
             "Car Control",
             "Parking Control",
             "Exit"
         };
-        private static readonly String MainMenuTopInfo = "Main menu";
+        private static readonly String MainMenuTopInfo = "Main menu";          //Title
         private static readonly List<MethodHandler> MainMenuMethods = new List<MethodHandler>
         {
-            CarControlMenu,
+            CarControlMenu,                                                    //Method, which works when choosen
             ParkingControlMenu,
             Exit
-        };
+        };                                                                     //*************
 
 
+                                                                               //Car Control Menu atributes
         private static readonly List<String> CarControlMenuItems = new List<String>
-        {
+        {                                                                      //Look Main Menu atributes for details
             "Add car",
             "Remove car",
+            "Refill the balance",
             "Car Balance",
             "Back"
         };
@@ -43,13 +46,14 @@ namespace ParkingBSA
         {
             AddCar,
             RemoveCar,
+            RefillBalance,
             CarBalance,
             Back
-        };
+        };                                                                     //*************
 
-
+        //Car Control Menu atributes
         private static readonly List<String> ParkingControlMenuItems = new List<String>
-        {
+        {                                                                      //Look Main Menu atributes for details
             "Balance",
             "Free Space",
             "Transactions history (1 min)",
@@ -64,79 +68,159 @@ namespace ParkingBSA
             History,
             Log,
             Back
-        };
+        };                                                                     //*************
 
-        private static void MainMenu()
+        private static void MainMenu() //Shows Main Menu
         {
             MainMenuMethods[PrintMenu(MainMenuItems, MainMenuTopInfo)]();
         }
 
-        private static void CarControlMenu()
+        private static void CarControlMenu() //Shows  Car ControlMenu
         {
             CarControlMenuMethods[PrintMenu(CarControlMenuItems, CarControlMenuTopInfo)]();
         }
 
-        private static void ParkingControlMenu()
+        private static void ParkingControlMenu() //Shows  Parking Control Menu
         {
             ParkingControlMenuItemsMethods[PrintMenu(ParkingControlMenuItems, ParkingControlMenuTopInfo)]();
         }
 
-        private static void Exit()
+        private static void Exit() // Exit app
         {
 
         }
 
-        private static void AddCar()
+        private static void AddCar() // Adding car to parking
         {
 
             CarTypes carType = CarTypeChoseMenu();
             Console.Clear();
             Console.WriteLine($"Car type: {carType}");
 
-            Console.Write("Enter Car`s ID: ");
-            String ID = Console.ReadLine();
-            Console.Write("Enter start balance: ");
-            decimal balance = decimal.Parse(Console.ReadLine());
+            try
+            {
+                Console.Write("Enter Car`s ID: ");
+                String ID = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(ID))
+                {
+                    throw new ArgumentException("Invalid ID");
+                }
+
+                Console.Write("Enter start balance: ");
+                decimal balance = decimal.Parse(Console.ReadLine());
+                if (balance < 0)
+                {
+                    throw new ArgumentException("Invalid balance, enter positive or zero balance");
+                }
+
+                Parking.AddCar(new Car(ID, carType, balance));
+                Console.WriteLine("Car Added");
+            }
+            catch (FormatException ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid balance format");
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Balance not entered");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.Clear();
+                Console.WriteLine(ex.Message);
+            }
             
-            Parking.AddCar(new Car(ID, carType, balance));
-            Console.WriteLine("Car Added");
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid data");
+            }
             Console.ReadKey();
             MainMenu();
         }
 
-        private static void RemoveCar()
+        private static void RemoveCar() // Removing car to from parking
         {
-            Car car = CarChoseMenu();
-            Parking.RemoveCar(car);
+            try
+            {
+                Car car = CarChoseMenu();
+                Parking.RemoveCar(car);
+                Console.Clear();
+                Console.WriteLine("Car removed");
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine("There is no car");
+            }
+            catch (ArithmeticException ex)
+            {
+                Console.Clear();
+                Console.WriteLine(ex.Message);
+            }
+            Console.ReadKey();
+            MainMenu();
+        }
+
+        private static void RefillBalance() //Refill car`s balance
+        {
+            try
+            {
+                Console.Clear();
+                Console.Write("Enter the sum: ");
+                decimal sum = decimal.Parse(Console.ReadLine());
+            }
+            catch (FormatException ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid sum format");
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Sum not entered");
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid sum");
+            }
+            MainMenu();
+        }
+
+
+        private static void CarBalance() // Show car`s balance
+        {
+            try
+            {
+                Car car = CarChoseMenu();
+                Console.Clear();
+                Console.WriteLine($"Balanse: {car.Balance}");
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.Clear();
+                Console.WriteLine("There is no car");
+            }
+            Console.ReadKey();
+            MainMenu();
+        }
+
+        private static void Back() // Return to Main Menu
+        {
+            MainMenu();
+        }
+
+        private static void Balance() // Show parking balance
+        {
             Console.Clear();
-            Console.WriteLine("Car removed");
+            Console.WriteLine($"Balance: {Parking.Balance}");
             Console.ReadKey();
-            MainMenu();
+            MainMenu(); 
         }
 
-        private static void CarBalance()
-        {
-            Car car = CarChoseMenu();
-            Console.Clear();
-            Console.WriteLine($"Balanse: {car.Balance}");
-            Console.ReadKey();
-            MainMenu();
-        }
-
-        private static void Back()
-        {
-            MainMenu();
-        }
-
-        private static void Balance()
-        {
-            Console.Clear();
-            Console.WriteLine($"Balanse: {Parking.Balance}");
-            Console.ReadKey();
-            MainMenu();
-        }
-
-        private static void FreeSpace()
+        private static void FreeSpace() // Show parking free space
         {
             Console.Clear();
             Console.WriteLine($"Free space: {Parking.FreeSpace()} cars");
@@ -144,7 +228,7 @@ namespace ParkingBSA
             MainMenu();
         }
 
-        private static void History()
+        private static void History() // Show Transactions history (1 min)
         {
             Console.Clear();
             Console.WriteLine($"{"Car",-12} {"Sum",-5} {"Date",-10} {"Time"}");
@@ -156,30 +240,42 @@ namespace ParkingBSA
             MainMenu();
         }
 
-        private static void Log()
+        private static void Log() // Show Transaction.log
         {
             Console.Clear();
-            Console.WriteLine($"{"Car",-12} {"Sum",-5} {"Date",-10} {"Time"}");
-            using (StreamReader sr = new StreamReader("Transactions.log"))
+            try
             {
-                Console.WriteLine(sr.ReadToEnd());
+                using (StreamReader sr = new StreamReader("Transactions.log"))
+                {
+                    Console.WriteLine($"{"Car",-12} {"Sum",-5} {"Date",-10} {"Time"}");
+                    Console.WriteLine(sr.ReadToEnd());
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine("Transactions.log is empty");
             }
             Console.ReadKey();
             MainMenu();
         }
 
-        private static Car CarChoseMenu()
+        private static Car CarChoseMenu() //Menu, that shown before removing or editing car to choose right car 
         {
             List<String> items = new List<string>();
+            
             foreach(Car i in Parking.CarsList)
             {
                 items.Add(i.ID);
+            }
+            if (items.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException();
             }
             int result = PrintMenu(items, "Choose car");
             return Parking.CarsList[result];
         }
 
-        private static CarTypes CarTypeChoseMenu()
+        private static CarTypes CarTypeChoseMenu() //Menu, that shown during adding car to choose right car type 
         {
             List<String> items = new List<string>();
             foreach (CarTypes i in Enum.GetValues(typeof(CarTypes)))
@@ -191,10 +287,10 @@ namespace ParkingBSA
         }
 
 
-
-        private static int PrintMenu(List<String> menuItems, String topInfo)
-        {
-            int counter = 0;
+        private static int PrintMenu(List<String> menuItems, String topInfo) //Method, that allows to select menu strings
+                                                                             //First argument - list of menu items to select
+        {                                                                    //Second argument - title
+            int counter = 0;                                                 //returns index of decision
             ConsoleKeyInfo key;
             do
             {
