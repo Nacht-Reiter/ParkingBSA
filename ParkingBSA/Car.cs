@@ -19,14 +19,14 @@ namespace ParkingBSA
     {
         public String ID { get; set; }
         public decimal Balance { get; private set; } = 0;
-
-
         public CarTypes CarType { get; set; }
+
 
         public delegate void CarPayHandler(decimal payment);
         public delegate void TransactionHandler(Transaction transaction);
         public event CarPayHandler Payed;
         public event TransactionHandler TransactionMade;
+
 
         public Car(string iD, CarTypes carType, decimal balance)
         {
@@ -83,6 +83,7 @@ namespace ParkingBSA
             else
             {
                 Payed(cost);
+
                 TransactionMade(new Transaction(DateTime.Now, ID, cost));
             }
             RemovePayment(cost);

@@ -18,5 +18,10 @@ namespace ParkingBSA
             CarID = carID;
             PayedMoney = payedMoney;
         }
+
+        public override String ToString()
+        {
+            return $"{CarID,-12} {PayedMoney,-5} {TransactionDateTime}";
+        }
     }
 }
