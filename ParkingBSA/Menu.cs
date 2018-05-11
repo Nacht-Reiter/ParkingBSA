@@ -170,6 +170,9 @@ namespace ParkingBSA
                 Console.Clear();
                 Console.Write("Enter the sum: ");
                 decimal sum = decimal.Parse(Console.ReadLine());
+                Car car = CarChoseMenu();
+                car.AddIncome(sum);
+                Console.WriteLine("Balance Refilled");
             }
             catch (FormatException ex)
             {
@@ -186,6 +189,7 @@ namespace ParkingBSA
                 Console.Clear();
                 Console.WriteLine("Invalid sum");
             }
+            Console.ReadKey();
             MainMenu();
         }
 
