@@ -10,9 +10,10 @@ namespace ParkingBSA
     {
         static void Main(string[] args)
         {
-
+            MainMenu();
 
         }
+        delegate void MethodHandler();
 
         private static readonly List<String> MainMenuItems = new List<String>
         {
@@ -21,16 +22,29 @@ namespace ParkingBSA
             "Exit"
         };
         private static readonly String MainMenuTopInfo = "Main menu";
+        private static readonly List<MethodHandler> MainMenuMethods = new List<MethodHandler>
+        {
+            CarControlMenu,
+            ParkingControlMenu,
+            Exit
+        };
 
 
         private static readonly List<String> CarControlMenuItems = new List<String>
         {
             "Add car",
             "Remove car",
-            "Balance",
+            "Car Balance",
             "Back"
         };
         private static readonly String CarControlMenuTopInfo = "Car Control";
+        private static readonly List<MethodHandler> CarControlMenuMethods = new List<MethodHandler>
+        {
+            AddCar,
+            RemoveCar,
+            CarBalance,
+            Back
+        };
 
 
         private static readonly List<String> ParkingControlMenuItems = new List<String>
@@ -42,8 +56,80 @@ namespace ParkingBSA
             "Back"
         };
         private static readonly String ParkingControlMenuTopInfo = "Parking Control";
+        private static readonly List<MethodHandler> ParkingControlMenuItemsMethods = new List<MethodHandler>
+        {
+            Balance,
+            FreeSpace,
+            History,
+            Log,
+            Back
+        };
 
 
+        private static void MainMenu()
+        {
+            MainMenuMethods[PrintMenu(MainMenuItems, MainMenuTopInfo)]();
+        }
+
+        private static void CarControlMenu()
+        {
+            CarControlMenuMethods[PrintMenu(CarControlMenuItems, CarControlMenuTopInfo)]();
+        }
+
+        private static void ParkingControlMenu()
+        {
+            ParkingControlMenuItemsMethods[PrintMenu(ParkingControlMenuItems, ParkingControlMenuTopInfo)]();
+        }
+
+        private static void Exit()
+        {
+
+        }
+
+        private static void AddCar()
+        {
+            MainMenu();
+        }
+
+        private static void RemoveCar()
+        {
+            MainMenu();
+        }
+
+        private static void CarBalance()
+        {
+            MainMenu();
+        }
+
+        private static void Back()
+        {
+            MainMenu();
+        }
+
+        private static void Balance()
+        {
+            MainMenu();
+        }
+
+        private static void FreeSpace()
+        {
+            MainMenu();
+        }
+
+        private static void History()
+        {
+            MainMenu();
+        }
+
+        private static void Log()
+        {
+            MainMenu();
+        }
+
+        //private static Car CarChoseMenu()
+        //{
+
+        //}
 
 
         private static int PrintMenu(List<String> menuItems, String topInfo)
